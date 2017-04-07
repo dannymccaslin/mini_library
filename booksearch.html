@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Get book info by ISBN</title>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"> </script>
+</head>
+<body>
+
+<script type="text/javascript" >
+function getBookDetails() {
+  
+  // Query the book database by ISBN code.
+ var  isbn = document.getElementById("isbn").value; 
+//remove hyphens and other unwanted characters in the isbn
+isbn = isbn.replace(/[-+()/s]/g, '');  
+console.log(isbn);
+  var url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn;
+ $.getJSON( url, function(data){
+	if (data.totalItems < 1) {
+		document.getElementById("failed").innerHTML = '<p>That ISBN was not found in the Google Books Database.</p>'	
+	}else {
+		document.getElementById("failed").innerHTML = '';
+	};
+	var book = data.items[0].volumeInfo;
+	var title = book.title;
+	var authors = book.authors[0];
+	for (var i in book.authors) {
+		if (i > 0) {
+			authors += ", ";
+			authors += book.authors[i];
+		}
+		
+	}
+	var desc = book.description; 
+	var pub = book.publisher;
+	var year = book.publishedDate;
+	var genre = book.genre[0];
+	for (var i in book.genre) {
+		if (i > 0) {
+			genre += ", ";
+			genre += book.genre[i];
+		}
+	}
+	var cover = book.imageLinks.thumbnail;
+	var categories = book.categories[0];
+		for (var i in book.categories) {
+			if (i > 0) {
+				categories += ", ";
+				categories += book.categories[i];
+			}
+		}
+
+	document.getElementById("title").value = title;
+	document.getElementById("title").value = title;
+	document.getElementById("authors").value = authors;
+	document.getElementById("pub").value = pub;
+	document.getElementById("year").value= year;
+	document.getElementById("desc").value= desc;
+	gocument.getElementById("genre").value = genre;
+	document.getElementById("bookcover").innerHTML= '<img src="'+cover+'" alt="'+title+'_cover" id="bookcover" style="width:128px;height:166px;">'
+
+
+});	
+	 
+ 
+
+	//alert(title + ", " + authors);
+ 
+  
+}
+
+</script>
+<input type="number" id="isbn" style="width:200px">
+<button onclick="getBookDetails()">Click</button>
+<span id="failed" style="color:red"></span>
+<form>
+Book Title: <input type="text" name="title" id="title" style="width:200px"></br>
+Author(s): <input type="text" name="authors" id="authors" style="width:200px"></br>
+Publisher: <input type="text" name="pub" id="pub"></br>
+Year of Publication: <input type="text" name="year" id="year"></br>
+Description: <textarea name="textarea" id="desc" style="width:500px;height:200px"></textarea> </br>
+Genre: <input type="text" name="genre" id="genre" style="width:200px"></br>
+<span id="bookcover"></span>
+<input type="submit" value="Add Book">
+</form>
+
+</body>
+
+</html>
